@@ -1,0 +1,7 @@
+---
+etcd_initial_cluster_token: kEu324SNXy328C2h32omc32UZ32dY32M
+ekz_fs: /dev/sdb
+elastic_cluster_name: EKZ-1
+int_ns_unreachable: false
+shared_ip: 10.21.130.67
+ka_vr_id: 101

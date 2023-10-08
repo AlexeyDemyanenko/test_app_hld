@@ -1,0 +1,9 @@
+---
+- hosts: etcd
+  roles:
+#    - preddeploy 
+    - prepos
+    # - packages
+    # - timeserver
+    # - keepalived
+    # - etcd

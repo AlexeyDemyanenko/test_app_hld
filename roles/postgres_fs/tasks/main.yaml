@@ -1,0 +1,34 @@
+---
+- block:
+  - name: Create force a volume group on top of {{ postgres_fs }}
+    lvg:
+      vg: vg_pgsql
+      pvs: "{{ postgres_fs }}"
+#      force: yes
+
+  - name: Create force a logical volume lv_pgsql the size of all remaining space in the volume group vg_pgsql
+    lvol:
+      vg: vg_pgsql
+      lv: lv_pgsql
+      size: 100%VG
+#      force: yes
+    
+  - name: Create a xfs filesystem on /dev/mapper/vg_pgsql-lv_pgsql
+    filesystem:
+      fstype: xfs
+      dev: /dev/mapper/vg_pgsql-lv_pgsql
+
+  - name: Make Postgres Data Dir
+    file:
+      path: /var/lib/pgsql
+      state: directory
+    
+  - name: Add Data Dir FS Into FSTAB
+    mount:
+      path: /var/lib/pgsql
+      src: /dev/mapper/vg_pgsql-lv_pgsql
+      fstype: xfs
+      state: mounted
+    
+  become: yes
+

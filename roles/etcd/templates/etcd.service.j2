@@ -1,0 +1,22 @@
+[Unit]
+Description=ETCD Daemon
+Documentation=https://github.com/etcd-io/etcd/tree/master/Documentation
+Requires=network.target
+After=network.target
+
+[Service]
+Environment=DAEMON_ARGS=
+Environment=ETCD_NAME={{ inventory_hostname }}
+Environment=ETCD_DATA_DIR=/opt/ex_data/etcd/data
+EnvironmentFile=-/opt/etcd/etcd.env
+Type=notify
+WorkingDirectory=/opt/etcd
+User=etcd
+Group=etcd
+ExecStart=/usr/bin/etcd $DAEMON_ARGS
+Restart=on-abnormal
+TimeoutSec=30
+
+[Install]
+WantedBy=multi-user.target
+

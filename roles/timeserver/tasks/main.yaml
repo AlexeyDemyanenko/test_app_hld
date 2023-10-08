@@ -1,0 +1,23 @@
+---
+- block:
+
+  - name: Set timezone
+    timezone: name={{ timezone }}
+
+  - name: Install chrony
+    package:
+      name:
+        - chrony
+
+  - name: Update /etc/chrony.conf
+    blockinfile:
+        path: /etc/chrony.conf
+        block: |
+          server {{ int_ntp1_ip }}
+          server {{ int_ntp2_ip }}
+
+  - name: Restart chronyd Service
+    systemd:
+      state: restarted
+      name: chronyd
+      enable: yes

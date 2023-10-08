@@ -1,0 +1,66 @@
+#System parameter
+ansible_user: root
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+timezone: Asia/Vladivostok
+int_ntp1_ip: 10.99.255.100
+int_ntp2_ip: 10.99.255.101
+int_ns1_ip: 10.99.255.148
+int_ns2_ip: 10.99.255.149
+int_ns3_ip: 10.99.255.151
+int_ns4_ip: 10.99.255.150
+domain: dvgd.oao.rzd
+#Front cluster
+front_cluster_ip: 10.100.100.101
+ext_ns1_ip: 8.8.8.8
+ext_ns2_ip: 8.8.4.4
+int_root_domain: rzd
+front_ip1: 10.100.100.98
+front_ip2: 10.100.100.99
+#Back cluster
+back_cluster_ip: 10.99.250.10
+backs_ip: 10.99.250.4,10.99.250.5
+#EKZ cluster
+ekz_node1: dvgd-ekz-01.dvgd.oao.rzd
+ekz_node2: dvgd-ekz-02.dvgd.oao.rzd
+ekz_node3: dvgd-ekz-03.dvgd.oao.rzd
+ekz_node1_ip: 10.99.250.7
+ekz_node2_ip: 10.99.250.8
+ekz_node3_ip: 10.99.250.9
+ekz_cluster_ip: 10.99.250.11
+#DB cluster
+db_cluster_ip: 10.99.250.39
+#Docker
+registry: rzd-registry.gvc.oao.rzd
+registry_ip: 10.248.46.53
+registry_user: registryuser
+registry_password: 1qazXSW@
+docker_log_size: 100m
+docker_log_files: 1
+#Express
+external_ip: 62.33.75.50
+api_internal_token: hrwbsBhdldkYmPbq
+ccs_host: im-dvgd.rzd.ru
+cts_id: 61c7fbbb-41c2-568c-a14d-7715c2865bf6
+kibana: 6CdhIy03xBoCopIB
+phoenix_secret_key_base: GONUBFNaGaUpFcL0aXSGmr2cpb3oggUu6s9UVL55SB9sJxioJzpzbDQ5JTAee1a1
+postgres_host: dvgd-sync-cl-01.dvgd.oao.rzd
+postgres_user: express
+postgres_password: Z9VZYjycZhh8d44O
+prometheus: U9ZNJwojgwTLnzGY
+rts_host: ru.public.express
+rts_id: df8d6eb9-105b-4efb-a742-b909fae28d62
+rts_token: Rd8n66Y0k6cLa7QHx98ybZW2DGiTt8pSvoe/KPChRQIPK2f8RRp0lUA73cWc9coWpQpjHqyyfs9FElALKo0J+qT/2wFCtJlCU8CLy0+wy5xgvmnEv9KzfAPXgZbRx4LXHS6USTPKAA2DCbu28gX9T93JMCmpi1dDxBi0sAefsxI=
+elk_host: dvgd-ekz-cl-01.dvgd.oao.rzd
+frontend_host: dvgd-front-cl-01.dvgd.oao.rzd
+backend_host: dvgd-back-cl-01.dvgd.oao.rzd
+kafka_host: dvgd-ekz-01.dvgd.oao.rzd,dvgd-ekz-02.dvgd.oao.rzd,dvgd-ekz-03.dvgd.oao.rzd
+etcd_host: http://dvgd-ekz-01.dvgd.oao.rzd:2379,http://dvgd-ekz-02.dvgd.oao.rzd:2379,http://dvgd-ekz-03.dvgd.oao.rzd:2379
+prometheus_retention_time: 28d
+voice_redis_password: Yd8UdcWsxN1q
+janus_local_client: true
+#Kaspersky
+klnagent_server: dvgd-av-01.dvgd.oao.rzd
+#ELK
+elk_index_retention_day: 30
+#Zabbix
+zabbix_server: dvgd-zabbix-proxy.dvgd.oao.rzd

@@ -1,0 +1,100 @@
+---
+- block:
+  - name: Install Required Packages
+    yum:
+      name: ['unzip', 'python-devel', 'python-dns', 'python-pip', 'gcc']
+      state: latest
+
+  - name: Copy Required Python Packages
+    copy: src=files/{{ item }} dest=/tmp/
+    loop:
+      - dnspython-1.16.0.zip
+      - psycopg2_binary-2.8.6-cp27-cp27mu-manylinux1_x86_64.whl
+      - boto-2.49.0-py2.py3-none-any.whl
+      - six-1.15.0-py2.py3-none-any.whl
+      - kazoo-2.7.0-py2.py3-none-any.whl
+      - urllib3-1.25.9-py2.py3-none-any.whl
+      - python-etcd-0.4.5.tar.gz
+      - pytz-2020.1-py2.py3-none-any.whl
+      - tzlocal-2.1-py2.py3-none-any.whl
+      - PyYAML-5.3.1.tar.gz
+      - cdiff-1.0.tar.gz
+      - python_dateutil-2.8.1-py2.py3-none-any.whl
+      - psutil-5.7.0.tar.gz
+      - prettytable-0.7.2.tar.gz
+      - click-7.1.2-py2.py3-none-any.whl
+
+  - name: Install Required Python Packages
+    pip:
+      executable: pip2.7 
+      name: file:///tmp/{{ item }}
+    loop:
+      - dnspython-1.16.0.zip
+      - psycopg2_binary-2.8.6-cp27-cp27mu-manylinux1_x86_64.whl
+      - boto-2.49.0-py2.py3-none-any.whl
+      - six-1.15.0-py2.py3-none-any.whl
+      - kazoo-2.7.0-py2.py3-none-any.whl
+      - urllib3-1.25.9-py2.py3-none-any.whl
+      - python-etcd-0.4.5.tar.gz
+      - pytz-2020.1-py2.py3-none-any.whl
+      - tzlocal-2.1-py2.py3-none-any.whl
+      - PyYAML-5.3.1.tar.gz
+      - cdiff-1.0.tar.gz
+      - python_dateutil-2.8.1-py2.py3-none-any.whl
+      - psutil-5.7.0.tar.gz
+      - prettytable-0.7.2.tar.gz
+      - click-7.1.2-py2.py3-none-any.whl
+
+  - name: Create /opt/patroni Dir
+    file: 
+      state=directory 
+      dest=/opt/patroni
+      owner=postgres
+      group=postgres
+      state=directory
+      recurse=yes
+
+  - name: Create /etc/patroni Dir
+    file: 
+      state=directory 
+      dest=/etc/patroni
+
+  - name: Install Patroni
+    unarchive:
+      src: files/patroni-master.tar.gz
+      dest: /opt/
+      owner: postgres
+      group: postgres
+    register: binaries
+
+  - name: Copy Patroni CFG File
+    template: 
+      src=patroni.yml.j2 
+      dest=/etc/patroni/patroni.yml backup=yes
+    register: config
+
+  - name: Check if Service Exists
+    stat: path=/etc/systemd/system/patroni.service
+    register: service_status
+
+  - name: Install systemd unit
+    template:
+      src: patroni.service
+      dest: /etc/systemd/system/patroni.service
+
+  - name: Restart service
+    systemd:
+      name: patroni
+      state: restarted
+      daemon_reload: yes
+    when: (service_status.stat.exists) and (binaries.changed or config.changed)
+
+  - name: Start patroni
+    systemd:
+      name: patroni.service
+      enabled: true
+      state: started
+      daemon_reload: yes
+    when: service_status.stat.exists == false
+
+  become: yes

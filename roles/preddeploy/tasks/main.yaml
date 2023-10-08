@@ -1,0 +1,78 @@
+---
+
+
+- name: add deployer in sudoers
+  become: true
+  shell:
+    cmd: "echo 'deployer ALL=NOPASSWD: ALL' >> /etc/sudoers"
+
+#- name: Disable rp_filter
+#  become: true
+#  sysctl:
+#    name: "net.ipv4.conf.{{ item }}.rp_filter"
+#    value: '0'
+#    sysctl_set: true
+#    state: present
+#    reload: true
+#  with_items: "{{ ansible_interfaces | difference(sysctl_remove_interfaces) + sysctl_add_interfaces }}"
+#  ignore_errors: true
+#  when: "'deploy' not in group_names"
+
+- block:
+  - name: Create .ssh directory
+    file:
+      path: "/home/{{ ansible_user }}/.ssh"
+      state: directory
+      mode: 0700
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_usergroup }}"
+
+  - name: Generate SSH keys
+    openssh_keypair:
+      path: "/home/{{ ansible_user }}/.ssh/id_rsa"
+      owner: "{{ ansible_user }}"
+    when: inventory_hostname in groups['deploy']
+
+  - name: Copy Public SSH key to another hosts
+    slurp:
+      src: "/home/{{ ansible_user }}/.ssh/id_rsa.pub"
+    register: ssh_public_key
+    when: inventory_hostname in groups['deploy']
+
+  - name: Spread keys on all servers
+    authorized_key:
+      user: "{{ ansible_user }}"
+      key: "{{ hostvars[item]['ssh_public_key']['content'] | b64decode }}"
+    with_items: "{{ groups['deploy'] | first }}"
+    when: hostvars[item]['ssh_public_key']['content'] is defined
+
+
+  - name: Disable DNS check
+    become: true
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      line: UseDNS no
+    register: sshd_config
+
+  - name: Restart SSHD service
+    become: true
+    systemd:
+      state: restarted
+      name: sshd
+    when: sshd_config.changed | default('false')
+  when: prepare_ssh | bool
+  tags: prepare_ssh
+
+- name: Disable NetworkManager service
+  become: true
+  service:
+    name: NetworkManager
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Disabling SELinux state
+  become: true
+  selinux:
+    state: disabled
+  notify: Restart machine

@@ -1,0 +1,17 @@
+- name: userddd + add key
+  hosts: web
+  vars:
+#    ansible_user: root
+#    ansible_password: Ne0yeir9dieT
+    
+  tasks:
+  - name: copy script
+    copy:
+      src: /home/useradd_home.sh
+      dest: /home/
+      owner: root
+      group: root
+      mode: '0777'
+  
+  - name: execute script
+    shell: /home/useradd_home.sh

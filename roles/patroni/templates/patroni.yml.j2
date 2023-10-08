@@ -1,0 +1,77 @@
+{% set all_etcd = [] -%}
+{% set etcd_hosts = groups['ekz'] -%}
+{% for host in etcd_hosts -%}
+  {% set _ = all_etcd.append("%s:2379" % (host)) -%}
+{% endfor -%}
+name: {{ inventory_hostname }}
+scope: cluster-pgsql
+
+etcd:
+  hosts: {{all_etcd|join(',')}}
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: {{ ansible_default_ipv4.address }}:8008
+  authentication: 
+    username: restapiuser
+    password: {{ patroni_rest_password }}
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        max_connections: 2000
+        archive_mode: "off"
+        wal_level: hot_standby
+        archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
+        max_wal_senders: 20
+        wal_keep_segments: 8
+        archive_timeout: 1800s
+        max_replication_slots: 10
+        hot_standby: "on"
+        wal_log_hints: "on"
+  pg_hba:
+    - local replication backup md5
+    - host replication backup 127.0.0.1/32 md5
+    - host replication replicator {{ local_network }} md5
+    - host replication replicator 127.0.0.1/32 md5
+    - host all all 0.0.0.0/0 md5
+  users:
+    {{ postgres_user }}:
+      password: {{ postgres_password }}
+      options:
+        - superuser
+        - createrole
+        - createdb
+
+postgresql:
+  listen: 0.0.0.0:5000
+  connect_address: {{ ansible_default_ipv4.address }}:5000
+  data_dir: /var/lib/pgsql/data/
+  pg_hba:
+    - local all all peer
+    - local replication backup md5
+    - host replication backup 127.0.0.1/32 md5
+    - host replication replicator {{ local_network }} md5
+    - host replication replicator 127.0.0.1/32 md5
+    - host all all 0.0.0.0/0 md5
+  authentication:
+    replication:
+      username: replicator
+      password: {{ patroni_replicator_password }}
+    superuser:
+      username: superuser
+      password: {{ patroni_superuser_password }}
+    rewind:
+      username: rewind
+      password: {{ patroni_superuser_password }}
+  restore: /opt/patroni/patroni/scripts/wale_restore.py
+
+tags:
+  nosync: {{ patroni_nosync|lower }}
+  nofailover: {{ patroni_nosync|lower }}

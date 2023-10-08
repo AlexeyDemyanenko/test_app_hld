@@ -1,0 +1,20 @@
+---
+hacluster_pwd: p32Qa32aR32pF325
+cluster_ip: 10.21.130.64
+cluster_ip_netmask: 24
+cluster_members: FR1.express-local-test.korusconsulting.ru FR2.express-local-test.korusconsulting.ru
+quorum_host: FR3.express-local-test.korusconsulting.ru
+express_cts_settings: settings.express-front.j2
+express_voice_settings: settings.express-front-voice.j2
+express_cert: cert.crt
+express_key: cert.key
+express_cts: true
+express_voice: true
+express_cadvinstall: false
+express_nxinstall: false
+elk_local: false
+isback: false
+ns1_ip: 10.21.150.1
+ns2_ip: 10.21.150.1
+ns3_ip: 10.21.150.1
+int_ns_unreachable: false

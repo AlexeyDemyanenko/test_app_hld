@@ -1,0 +1,3 @@
+---
+keepalived_priority: 99
+patroni_nosync: false

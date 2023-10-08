@@ -1,0 +1,9 @@
+---
+- hosts: db
+  roles:
+    - prepos
+    - packages
+    - timeserver
+    - postgres_fs
+    - postgres
+    - patroni

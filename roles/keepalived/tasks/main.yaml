@@ -1,0 +1,29 @@
+---
+- block:
+  - name: Install Keepalived
+    yum:
+      name: keepalived
+      state: latest
+
+  - name: Copy DB Keepalived config File
+    template: 
+      src=db-keepalived.conf.j2 
+      dest=/etc/keepalived/keepalived.conf
+      backup=yes
+    when: hostvars[inventory_hostname].group_names[0] == 'db'
+
+  - name: Copy EKZ Keepalived config File
+    template:
+      src=ekz-keepalived.conf.j2
+      dest=/etc/keepalived/keepalived.conf
+      backup=yes
+    when: hostvars[inventory_hostname].group_names[0] == 'ekz'
+
+  - name: Keepalived Service Enable and Restart
+    systemd:
+      state: started
+      name: keepalived
+      enabled: yes
+      daemon_reload: yes
+
+  become: yes

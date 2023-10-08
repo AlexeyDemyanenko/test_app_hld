@@ -1,0 +1,35 @@
+---
+- block:
+
+  - name: Change hostname
+    hostname: name="{{ inventory_hostname }}"
+    when: not inventory_hostname is match('(\d{1,3}\.){3}\d{1,3}')
+
+  - name: Re-gather facts
+    action: setup
+    when: inventory_hostname != inventory_hostname_short
+
+  - name: Update /etc/hosts
+    lineinfile:
+      state=present
+      dest=/etc/hosts
+      line="{{ ansible_default_ipv4.address }} {{ inventory_hostname_short }} {{ inventory_hostname }}"
+      regexp="^{{ ansible_default_ipv4.address }}"
+
+
+  - name: Add registry host to /etc/hosts
+    blockinfile:
+        path: /etc/hosts
+        block: |
+          {{ registry_ip }} {{ registry }}
+          domain hlds.local
+    when: int_ns_unreachable == true
+
+  - name: Put SELinux in permissive mode, logging actions that would be blocked.
+    selinux:
+      policy: targeted
+      state: permissive
+    register: selinux
+
+
+  become: yes

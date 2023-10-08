@@ -1,0 +1,29 @@
+global_defs {
+   router_id {{ inventory_hostname }}
+}
+
+vrrp_script chk_haproxy {
+        script "curl --silent localhost:9600"
+        interval 1
+        weight -20
+        debug
+        fall 2
+        rise 2
+}
+
+vrrp_instance {{ inventory_hostname }} {
+        interface {{ ansible_default_ipv4.interface }}
+        state BACKUP
+        virtual_router_id {{ ka_vr_id }}
+        priority {{ keepalived_priority }}
+        authentication {
+            auth_type PASS
+            auth_pass rV2MU85Yy4me3KEgQCXWxAjv
+        }
+        track_script {
+		chk_haproxy weight 20
+        }
+        virtual_ipaddress {
+                {{ shared_ip }} dev {{ ansible_default_ipv4.interface }}
+        }
+}

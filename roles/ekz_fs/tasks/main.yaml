@@ -1,0 +1,34 @@
+---
+- block:
+  - name: Create force a volume group on top of {{ ekz_fs }}
+    lvg:
+      vg: vg_opt
+      pvs: "{{ ekz_fs }}"
+      force: yes
+
+  - name: Create force a logical volume lv_opt the size of all remaining space in the volume group vg_opt
+    lvol:
+      vg: vg_opt
+      lv: lv_opt
+      size: 100%VG
+      force: yes
+    
+  - name: Create a xfs filesystem on /dev/mapper/vg_opt-lv_opt
+    filesystem:
+      fstype: xfs
+      dev: /dev/mapper/vg_opt-lv_opt
+
+  - name: Make Dir
+    file:
+      path: /opt
+      state: directory
+    
+  - name: Add Dir FS Into FSTAB
+    mount:
+      path: /opt
+      src: /dev/mapper/vg_opt-lv_opt
+      fstype: xfs
+      state: mounted
+    
+  become: yes
+

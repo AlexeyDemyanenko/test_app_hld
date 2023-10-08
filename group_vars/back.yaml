@@ -1,0 +1,34 @@
+---
+hacluster_pwd: p432ak32RS32F3225
+cluster_ip: 10.21.130.65
+cluster_ip_netmask: 24
+cluster_members: BK1.express-local-test.korusconsulting.ru BK2.express-local-test.korusconsulting.ru
+#cluster_members: 10.21.130.51 10.21.130.52
+quorum_host: BK3.express-local-test.korusconsulting.ru
+#quorum_host: 10.21.130.53
+
+docker_fs: /dev/sdb
+fileshare_fs: /dev/sdc
+express_cts_settings: settings.express-back.j2
+express_cert: express.crt
+express_key: express.key
+express_cts: true
+express_voice: false
+express_voice_settings: none
+express_cadvinstall: true
+express_nxinstall: true
+elk_local: false
+isback: true
+int_ns_unreachable: false
+name_node1: BK1.express-local-test.korusconsulting.ru
+#name_node1: 10.21.130.51
+vm_name_node1: BK1
+name_node2: BK2.express-local-test.korusconsulting.ru
+#name_node2: 10.21.130.52
+vm_name_node2: BK2
+fence_host: rb-d01-vc-v01.korusconsulting.res
+fence_user: svc-expapi-1@korusconsulting.res
+fence_password: koruspassEXP-28
+
+
+

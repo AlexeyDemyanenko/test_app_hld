@@ -1,0 +1,4 @@
+---
+isquorum: false
+ismaster: true
+clvm_device: /dev/sdb

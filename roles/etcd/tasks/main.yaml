@@ -1,0 +1,65 @@
+---
+- block:
+
+  - name: Add ETCD user
+    user:
+      name: etcd
+      comment: ETCD server
+      home: /opt/etcd
+      shell: /bin/bash
+      system: yes
+
+  - name: Create datadir
+    file:
+      path: /opt/ex_data/etcd/data
+      owner: etcd
+      group: etcd
+      state: directory
+
+  - name: Unpack etcd binaries
+    unarchive:
+      src: files/etcd-v3.4.3-linux-amd64.tar.gz
+      dest: /tmp
+
+  - name: Copy etcd binaries
+    copy:
+      src: "/tmp/etcd-v3.4.3-linux-amd64/{{ item }}"
+      dest: /usr/bin
+      mode: 0755
+      owner: root
+      group: root
+      remote_src: yes
+    with_items:
+      - etcd
+      - etcdctl
+    register: binaries
+
+  - name: Copy etcd config
+    template:
+      src: etcd.env.j2
+      dest: /opt/etcd/etcd.env
+    register: config
+
+  - name: Check if Service Exists
+    stat: path=/etc/systemd/system/etcd.service
+    register: service_status
+
+  - name: Restart service
+    systemd:
+      name: etcd
+      state: restarted
+      daemon_reload: yes
+    when: (service_status.stat.exists) and (binaries.changed or config.changed)
+
+  - name: Install systemd unit
+    template:
+      src: etcd.service.j2
+      dest: /etc/systemd/system/etcd.service
+
+  - name: Start etcd
+    systemd:
+      name: etcd.service
+      enabled: true
+      state: started
+      daemon_reload: yes
+    when: service_status.stat.exists == false

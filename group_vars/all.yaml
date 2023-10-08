@@ -1,0 +1,41 @@
+---
+#System parametr
+ansible_user: deployer
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+timezone: Europe/Moscow
+int_ntp1_ip: 10.20.152.1
+int_ntp2_ip: 10.21.130.236
+int_ns1_ip: 10.21.151.1
+int_ns2_ip: 10.21.151.1
+int_ns3_ip: 10.21.151.1
+int_ns4_ip: 10.21.151.1
+domain: hlds.mons.ru
+
+#Front cluster
+front_cluster_ip: 10.21.130.64
+ext_ns1_ip: 10.21.151.1
+ext_ns2_ip: 10.21.151.1
+int_root_domain: express
+front_ip1: 10.21.130.54
+front_ip2: 10.21.130.55
+
+#Back cluster
+back_cluster_ip: 10.21.130.65
+backs_ip: 10.21.130.51,10.21.130.52
+
+#EKZ cluster
+etcd_node1: etcd1.hlds.mons.ru
+ekz_node1_ip: 10.11.10.68
+ekz_node2: etcd2.hlds.mons.ru
+ekz_node2_ip: 10.11.10.72
+ekz_node3: etcd3.hlds.mons.ru
+ekz_node3_ip: 10.11.10.61
+
+
+#DB cluster
+db_cluster_ip: 10.21.130.66
+
+
+frontend_host: FR-VIP.express-local-test.korusconsulting.ru
+backend_host: BK-VIP.express-local-test.korusconsulting.ru
+etcd_host: http://etcd1.hlds.mons.ruu:2379,http://etcd2.hlds.mons.ru:2379,http://etcd3.hlds.mons.ruu:2379

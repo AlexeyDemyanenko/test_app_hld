@@ -1,0 +1,11 @@
+---
+group_sync: db_sync
+group_alldb: db
+shared_ip: 	10.21.130.66
+local_network: 	10.21.130.0/24
+postgres_fs: /dev/sdb
+patroni_rest_password: r32tD32s32eS
+patroni_superuser_password: B32J432f326x
+patroni_replicator_password: E32HD32632ef
+int_ns_unreachable: false
+ka_vr_id: 102

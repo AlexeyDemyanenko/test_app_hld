@@ -1,0 +1,8 @@
+---
+- hosts: haproxy
+  roles:
+    - prepos
+    - packages
+    - timeserver
+    - keepalived
+    - haproxy
